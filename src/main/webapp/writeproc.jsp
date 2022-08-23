@@ -1,3 +1,4 @@
+<%@page import="com.astinel.util.mysql.MysqlProc"%>
 <%@page import="java.sql.ResultSet"%>
 <%@page import="java.sql.Statement"%>
 <%@page import="java.sql.DriverManager"%>
@@ -8,7 +9,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>writeproc</title>
+<title>write process</title>
 <link rel="stylesheet" href="common.css">
 </head>
 <body>
@@ -17,6 +18,29 @@
 	String content = request.getParameter("content");
 	String id = request.getParameter("id");
 	request.setCharacterEncoding("UTF-8");	// 이거 안하면 한글 깨짐.
+	
+	MysqlProc.dbInit();
+	MysqlProc.dbConnect();
+	
+	// 글쓰기 sql 전송
+	String sql = "insert into board (id,title,content) values ('"+id+"','"+title+"','"+content+"')";
+	System.out.println("==== send sql:" + sql);
+	int resultCount = MysqlProc.executeUpdate(sql);	
+	if(resultCount == 1){
+		System.out.println("==== success");
+	} else {
+		System.out.println("==== Failed");
+	}
+	
+	// 글리스트 화면으로 강제 이동
+	response.sendRedirect("list.jsp");	
+	
+	
+/* 	String title = request.getParameter("title");
+	String content = request.getParameter("content");
+	String id = request.getParameter("id");
+	request.setCharacterEncoding("UTF-8");	// 이거 안하면 한글 깨짐.
+	
 	try {
 		Class.forName("com.mysql.cj.jdbc.Driver");
 		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/jsp_project", "root", "admin");
@@ -34,7 +58,7 @@
 		e.printStackTrace();
 	}
 	
-	response.sendRedirect("list.jsp");	// 글리스트 화면으로 강제 이동
+	response.sendRedirect("list.jsp");	// 글리스트 화면으로 강제 이동 */
 %>
 </body>
 </html>

@@ -1,3 +1,4 @@
+<%@page import="com.astinel.util.mysql.MysqlProc"%>
 <%@page import="java.sql.Statement"%>
 <%@page import="java.sql.DriverManager"%>
 <%@page import="java.sql.Connection"%>
@@ -13,7 +14,29 @@
 <body>
 <%
 	String delNum = request.getParameter("num");
-	try{
+
+	MysqlProc.dbInit();
+	MysqlProc.dbConnect();
+	String sql = "delete from board where num = " + delNum;
+	System.out.println("==== delete sql:" + sql);
+	
+	// 글쓰기 sql 전송
+	int resultCount = MysqlProc.executeUpdate(sql);	
+	if(resultCount == 1){
+		System.out.println("==== success");
+	} else {
+		System.out.println("==== Failed");
+	}
+	MysqlProc.dbDisconnect();
+	
+	//글 리스트 화면으로 강제 이동
+	response.sendRedirect("list.jsp");
+
+
+
+
+
+/* 	try{
 		Class.forName("com.mysql.cj.jdbc.Driver");
 		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/jsp_project", "root", "admin");
 		Statement st = con.createStatement();
@@ -30,7 +53,7 @@
 		e.printStackTrace();
 	}
 	
-	response.sendRedirect("list.jsp");	// 글리스트 화면으로 강제 이동
+	response.sendRedirect("list.jsp");	// 글리스트 화면으로 강제 이동 */
 %>
 </body>
 </html>

@@ -1,3 +1,4 @@
+<%@page import="com.astinel.util.mysql.MysqlProc"%>
 <%@page import="java.sql.ResultSet"%>
 <%@page import="java.sql.Statement"%>
 <%@page import="java.sql.DriverManager"%>
@@ -14,6 +15,24 @@
 <body>
 <%
 	String editNum = request.getParameter("num");
+
+	MysqlProc.dbInit();
+	MysqlProc.dbConnect();
+	
+	//수정할 글 하나 읽어오기
+	String sql = "select * from board where num = "+editNum;
+	ResultSet rs = MysqlProc.executeQuery(sql); 
+	
+	//글 하나 꺼내서 작업대에 올리기
+	rs.next(); 
+	String title =rs.getString("title");
+	String content =rs.getString("content");
+	String id =rs.getString("id");
+
+	
+	
+	
+/* 	String editNum = request.getParameter("num");
 	String title = null;
 	String content = null;
 	String id = null;
@@ -34,17 +53,17 @@
 		
 	} catch (Exception e) {		
 		e.printStackTrace();
-	}
+	} 
+*/
 %>
 
 글 번호: <%=editNum %><br>
 
 	<form action="modifyproc.jsp" method="get">
 		<input name="num" type="hidden" value=<%=editNum %>>
-		title: <input name="title" value=<%=title %>><br>
+		<input name="title" value=<%=title %>><br>
 		<textarea name="content" rows="3" cols="50" ><%=content %></textarea>
-		
-		id: <input name="id" value=<%=id %>><br>
+		<input name="id" value=<%=id %>><br>
 		<input type="submit" value="수정하기">
 	</form>
 

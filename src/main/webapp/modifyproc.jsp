@@ -1,3 +1,4 @@
+<%@page import="com.astinel.util.mysql.MysqlProc"%>
 <%@page import="java.sql.ResultSet"%>
 <%@page import="java.sql.Statement"%>
 <%@page import="java.sql.DriverManager"%>
@@ -20,7 +21,29 @@
 	
 	request.setCharacterEncoding("UTF-8");	// 이거 안하면 한글 깨짐.
 	
-	try {
+	MysqlProc.dbInit();
+	MysqlProc.dbConnect();
+
+	//update board set title = 'title', content = 'content test', id = 'id' where num = 2;
+	String sql = "update board set title = '"+title+"', content = '"+content+"', id = '"+id+"' where num = "+editNum;
+	System.out.println("==== send sql:" + sql);
+	
+	// 글쓰기 sql 전송
+	int resultCount = MysqlProc.executeUpdate(sql);	
+
+	if(resultCount == 1){
+		System.out.println("==== success");
+	} else {
+		System.out.println("==== Failed");
+	}
+	
+	MysqlProc.dbDisconnect();
+	
+	// 글리스트 화면으로 강제 이동
+	response.sendRedirect("list.jsp");	
+	
+	
+/* 	try {
 		Class.forName("com.mysql.cj.jdbc.Driver");
 		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/jsp_project", "root", "admin");
 		Statement st = con.createStatement();
@@ -41,7 +64,7 @@
 		e.printStackTrace();
 	}
 	
-	response.sendRedirect("list.jsp");	// 글리스트 화면으로 강제 이동
+	response.sendRedirect("list.jsp");	// 글리스트 화면으로 강제 이동 */
 %>
 </body>
 </html>

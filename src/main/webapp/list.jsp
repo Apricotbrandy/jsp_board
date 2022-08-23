@@ -1,42 +1,79 @@
+<%@page import="org.apache.jasper.tagplugins.jstl.core.Catch"%>
+<%@page import="com.astinel.util.mysql.MysqlProc"%>
 <%@page import="java.sql.ResultSet"%>
 <%@page import="java.sql.Statement"%>
 <%@page import="java.sql.DriverManager"%>
 <%@page import="java.sql.Connection"%>
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="EUC-KR">
+<meta charset="UTF-8">
 <title>List</title>
 <link rel="stylesheet" href="common.css">
 </head>
 <body>
 <%
-	try {
-		Class.forName("com.mysql.cj.jdbc.Driver");
-		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/jsp_project", "root", "admin");
-		Statement st = con.createStatement();	// Statement´Â Á¤Àû SQL¹®À» ½ÇÇàÇÏ°í °á°ú¸¦ ¹ÝÈ¯¹Þ±â À§ÇÑ °´Ã¼´Ù. StatementÇÏ³ª´ç ÇÑ°³ÀÇ ResultSet °´Ã¼¸¸À» ¿­ ¼öÀÖ´Ù.
-		ResultSet rs = st.executeQuery("select * from board");
+	
+	//==== paging
+	String pageNum = request.getParameter("page");
+	int currentPageNum = 1;
+	if(pageNum != null){
+		currentPageNum = Integer.parseInt(pageNum);
+	}
+	
+	MysqlProc.dbInit();
+	
+	int dataCount = MysqlProc.getDataCount();
+	int pageMaxNum = (int)Math.ceil((double) dataCount / MysqlProc.BOARD_LIST_AMOUNT);
+	
+	MysqlProc.dbConnect();
+	
+	int currentDataIndex = 0;
+	currentDataIndex = (currentPageNum - 1) * MysqlProc.BOARD_LIST_AMOUNT;
+	
+	try{
+	String sql = "select * from board limit "+currentDataIndex+","+MysqlProc.BOARD_LIST_AMOUNT;
+	ResultSet rs = MysqlProc.executeQuery(sql);
 		while(rs.next()){
 			String num = rs.getString("num");
 			String title = rs.getString("title");
 			String content = rs.getString("content");
 			String id = rs.getString("id");
+	
 %>
-
 	<%-- <%=num %> | <%=title %> | <%=content %> | <%=id %><br> --%>
-	<a href="read.jsp?num=<%=num %>"><%=title %></a>&nbsp;&nbsp;&nbsp;&nbsp;<%=id %><br>
+	<%=num %>&nbsp;&nbsp;&nbsp;&nbsp;<a href="read.jsp?num=<%=num %>"><%=title %></a>&nbsp;&nbsp;&nbsp;&nbsp;<%=id %><br>
 	
 <%
+	}
+	MysqlProc.dbDisconnect();
+%>
+
+<br>
+
+<!-- í•˜ë‹¨ì— íŽ˜ì´ì§• ìˆ«ìž ë‚˜íƒ€ë‚´ê¸° -->
+<%
+	for(int i=1; i<=pageMaxNum; i++){
+		if(currentPageNum == i){
+%>			
+			<%=i %>
+<%		
+		}else{
+%>			
+			<a href="list.jsp?page=<%=i %>"><%=i %></a>
+<%
 		}
+	}
 	}catch(Exception e){
 		e.printStackTrace();
 	}
-		
+	
 %>
-
-<a href="write.jsp">±Û ¾²±â</a>
+<br>
+<a href="write.jsp">ê¸€ ì“°ê¸°</a>
+<a href="index.jsp">HOME</a>
 
 </body>
 </html>

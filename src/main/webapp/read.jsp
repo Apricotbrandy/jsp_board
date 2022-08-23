@@ -1,49 +1,65 @@
+<%@page import="com.astinel.util.mysql.MysqlProc"%>
 <%@page import="java.sql.ResultSet"%>
 <%@page import="java.sql.Statement"%>
 <%@page import="java.sql.DriverManager"%>
 <%@page import="java.sql.Connection"%>
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="EUC-KR">
+<meta charset="UTF-8">
 <title>Read</title>
 <link rel="stylesheet" href="common.css">
 </head>
 <body>
 <%
-	String readNum = request.getParameter("num"); //url get ¹æ½ÄÀ¸·Î ÀÐÀ» ±Û ¹øÈ£¸¦ ¹Þ¾Æ¼­ º¯¼ö ÀúÀå ex)url.?num=1 ÀÌ·± ½ÄÀ¸·Î
+	String readNum = request.getParameter("num"); //url get ë°©ì‹ìœ¼ë¡œ ì½ì„ ê¸€ ë²ˆí˜¸ë¥¼ ë°›ì•„ì„œ ë³€ìˆ˜ ì €ìž¥ ex)url.?num=1 ì´ëŸ° ì‹ìœ¼ë¡œ
 	
-	try {
+	MysqlProc.dbInit();
+	MysqlProc.dbConnect();
+	String sql = "select * from board where num="+readNum;
+	ResultSet rs = MysqlProc.executeQuery(sql);
+	rs.next();
+	String num = rs.getString("num");
+	String title = rs.getString("title");
+	String content = rs.getString("content");
+	String id = rs.getString("id");
+	
+	content = content.replaceAll("\r\n", "<br/>");
+
+	
+/* 	try {
 		Class.forName("com.mysql.cj.jdbc.Driver");
 		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/jsp_project", "root", "admin");
-		Statement st = con.createStatement();	// Statement´Â Á¤Àû SQL¹®À» ½ÇÇàÇÏ°í °á°ú¸¦ ¹ÝÈ¯¹Þ±â À§ÇÑ °´Ã¼´Ù. StatementÇÏ³ª´ç ÇÑ°³ÀÇ ResultSet °´Ã¼¸¸À» ¿­ ¼öÀÖ´Ù.
+		Statement st = con.createStatement();	// StatementëŠ” ì •ì  SQLë¬¸ì„ ì‹¤í–‰í•˜ê³  ê²°ê³¼ë¥¼ ë°˜í™˜ë°›ê¸° ìœ„í•œ ê°ì²´ë‹¤. Statementí•˜ë‚˜ë‹¹ í•œê°œì˜ ResultSet ê°ì²´ë§Œì„ ì—´ ìˆ˜ìžˆë‹¤.
 		ResultSet rs = st.executeQuery("select * from board where num="+readNum);
 		while(rs.next()){
 			String num = rs.getString("num");
 			String title = rs.getString("title");
 			String content = rs.getString("content");
-			String id = rs.getString("id");
+			String id = rs.getString("id"); */
 %>
 
-	±Û ¹øÈ£: <%=num %> 
-	±Û Á¦¸ñ: <%=title %>	ÀÛ¼ºÀÚ: <%=id %><br>
-	±Û ³»¿ë: <br>
+	ê¸€ ë²ˆí˜¸: <%=num %> <br>
+	ê¸€ ì œëª©: <%=title %>&nbsp;&nbsp;&nbsp;&nbsp;ìž‘ì„±ìž: <%=id %><br>
+	ê¸€ ë‚´ìš©: <br>
 	<%=content %>
 	
 	
 <%
-		}
+	MysqlProc.dbDisconnect();	
+
+/* 		}
 	}catch(Exception e){
 		e.printStackTrace();
-	}
+	} */
 		
 %>
 
-
-<br><a href="delproc.jsp?num=<%=readNum %>">±Û »èÁ¦ÇÏ±â</a>
-<br><a href="modify.jsp?num=<%=readNum %>">±Û ¼öÁ¤ÇÏ±â</a>
+<br><a href="list.jsp">ê¸€ ëª©ë¡ìœ¼ë¡œ</a>
+<br><a href="delproc.jsp?num= <%=num %>">ê¸€ ì‚­ì œí•˜ê¸°</a>
+<br><a href="modify.jsp?num= <%=num %>">ê¸€ ìˆ˜ì •í•˜ê¸°</a>
 
 </body>
 </html>

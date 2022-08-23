@@ -4,10 +4,11 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Index</title>
+<title>HOME</title>
 <link rel="stylesheet" type="text/css" href="common.css">
 </head>
 <body>
-<a href="list.jsp">LIST</a>
+<div ><a href="list.jsp">LIST</a></div>
+
 </body>
 </html>
